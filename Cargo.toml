@@ -1,0 +1,11 @@
+[workspace]
+
+members = [
+    # Libs
+    "libs/config",
+    "libs/error",
+    "libs/infrastructure",
+    "libs/support",
+    # Bin
+    "bin"
+]
