@@ -10,9 +10,9 @@ pub fn configure(
 }
 
 fn employee(
-    _postgres: Arc<Postgres>,
-    _cfg: &mut web::ServiceConfig
+    postgres: Arc<Postgres>,
+    cfg: &mut web::ServiceConfig
 ) {
-    //crate::application::employee::create::setup::routes(postgres.clone(), cfg);
-    //crate::application::employee::get::info::setup::routes(postgres.clone(), cfg);
+    crate::application::employee::create::setup::routes(postgres.clone(), cfg);
+    crate::application::employee::get::setup::routes(postgres, cfg);
 }
