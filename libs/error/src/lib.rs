@@ -5,9 +5,7 @@ use std::{
     convert::From, error::Error as StdError, fmt,
 };
 use diesel::result::Error as DieselError;
-use reqwest::Error as RequestError;
 use validr::error::ValidationErrors;
-use jsonwebtoken::errors::Error as JwtError;
 
 #[derive(Debug)]
 pub enum Error {
@@ -17,11 +15,7 @@ pub enum Error {
     Diesel(DieselError),
     Request(String),
     JsonDataNotFound(String),
-    PasswordHashing,
     Validation(ValidationErrors),
-    Jwt,
-    Unauthorized(String),
-    Forbidden(String),
     Connection,
 }
 
@@ -34,11 +28,7 @@ impl fmt::Display for Error {
             Error::Diesel(ref cause) => write!(f, "DB Error: {}", cause),
             Error::Request(ref cause) => write!(f, "Request error: {}", cause),
             Error::JsonDataNotFound(ref cause) => write!(f, "Data not found in Json: {}", cause),
-            Error::PasswordHashing => write!(f, "Error while hashing password"),
             Error::Validation(ref cause) => {write!(f, "Validation error: {}", cause)},
-            Error::Jwt => write!(f, "Jwt verification error"),
-            Error::Unauthorized(ref cause) => write!(f, "Authorization error: {}", cause),
-            Error::Forbidden(ref cause) => write!(f, "Forbidden error: {}", cause),
             Error::Connection => write!(f, "Cannot establish connection with database"),
         }
     }
@@ -53,11 +43,7 @@ impl StdError for Error {
             Error::Diesel(ref cause) => Some(cause),
             Error::Request(ref _cause) => None,
             Error::JsonDataNotFound(ref _cause) => None,
-            Error::PasswordHashing => None,
             Error::Validation(ref cause) => Some(cause),
-            Error::Jwt => None,
-            Error::Unauthorized(ref _cause) => None,
-            Error::Forbidden(ref _cause) => None,
             Error::Connection => None,
         }
     }
@@ -75,30 +61,9 @@ impl From<DieselError> for Error {
     }
 }
 
-impl From<RequestError> for Error {
-    fn from(cause: RequestError) -> Self {
-        let url = match cause.url() {
-            Some(url) => url.as_str(),
-            None => "n/a",
-        };
-        let source = match cause.source() {
-            Some(error) => error.to_string(),
-            None => "n/a".to_string(),
-        };
-        let error = format!("Error: {} - {}", url, source);
-        Error::Request(error)
-    }
-}
-
 impl From<ValidationErrors> for Error {
     fn from(cause: ValidationErrors) -> Self {
         Error::Validation(cause)
-    }
-}
-
-impl From<JwtError> for Error {
-    fn from(_cause: JwtError) -> Self {
-        Error::Jwt
     }
 }
 
@@ -109,13 +74,9 @@ impl ResponseError for Error {
         }
 
         let mut response = match self {
-            Error::Jwt | Error::Unauthorized(_) => {
-                HttpResponse::Unauthorized()
-            },
             Error::NotFound => HttpResponse::NotFound(),
             Error::NotFoundWithCause(_) => HttpResponse::NotFound(),
             Error::Request(_) => HttpResponse::BadRequest(),
-            Error::Forbidden(_) => HttpResponse::Forbidden(),
             _ => HttpResponse::InternalServerError(),
         };
 
@@ -177,30 +138,6 @@ impl Error {
                 code: "data not found".to_string(), 
                 cause: Some(cause.to_string()), 
                 payload: None, 
-            },
-            Error::PasswordHashing => ErrorBody { 
-                message: Some("Something went wrong while hashing password".to_string()), 
-                code: "server_error".to_string(), 
-                cause: None, 
-                payload: None,
-            },
-            Error::Jwt => ErrorBody {
-                message: Some("JWT authorization error".to_string()),
-                code: "jwt".to_string(),
-                cause: None,
-                payload: None,
-            },
-            Error::Unauthorized(ref cause) => ErrorBody { 
-                message: Some("Unauthorized error".to_string()), 
-                code: "unauthorized".to_string(), 
-                cause: Some(cause.to_string()), 
-                payload: None, 
-            },
-            Error::Forbidden(ref cause) => ErrorBody {
-                message: Some("Forbidden error".to_string()),
-                code: "forbidden".to_string(),
-                cause: Some(cause.to_string()),
-                payload: None,
             },
             _ => ErrorBody {
                 message: Some("Something went wrong".to_string()),
