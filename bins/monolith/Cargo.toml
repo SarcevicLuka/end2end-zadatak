@@ -1,5 +1,5 @@
 [package]
-name = "bin"
+name = "monolith"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,10 +7,10 @@ edition = "2021"
 
 [dependencies]
 # Workspace
-config = { path = "../libs/config" }
-error = { path = "../libs/error" }
-infrastructure = { path = "../libs/infrastructure" }
-support = { path = "../libs/support" }
+config = { path = "../../libs/config" }
+error = { path = "../../libs/error" }
+infrastructure = { path = "../../libs/infrastructure" }
+support = { path = "../../libs/support" }
 
 # Helpers
 serde = "1.0.157"

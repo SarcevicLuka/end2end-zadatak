@@ -7,5 +7,5 @@ members = [
     "libs/infrastructure",
     "libs/support",
     # Bin
-    "bin"
+    "bins/monolith"
 ]
