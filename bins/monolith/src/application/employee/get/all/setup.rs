@@ -3,8 +3,8 @@ use actix_web::web;
 use infrastructure::db::Postgres;
 
 use super::{
-    domain::GetEmployee, 
-    http::handle_get_employee, 
+    domain::GetEmployees, 
+    http::handle_get_employees, 
     infrastructure::PgRepository
 };
 
@@ -12,7 +12,7 @@ pub fn routes(
     postgres: Arc<Postgres>,
     cfg: &mut web::ServiceConfig
 ) {
-    let service = GetEmployee {
+    let service = GetEmployees {
         repository: PgRepository {
             pg_pool: postgres,
         },
@@ -20,9 +20,9 @@ pub fn routes(
 
     cfg.app_data(web::Data::new(service));
     cfg.service(
-        web::resource("employee/{employee_id}")
-        .route(web::get().to(handle_get_employee::<
-            GetEmployee<PgRepository>    
+        web::resource("employees")
+        .route(web::get().to(handle_get_employees::<
+            GetEmployees<PgRepository>    
         >))
     );
 }

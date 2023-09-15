@@ -14,5 +14,6 @@ fn employee(
     cfg: &mut web::ServiceConfig
 ) {
     crate::application::employee::create::setup::routes(postgres.clone(), cfg);
-    crate::application::employee::get::setup::routes(postgres, cfg);
+    crate::application::employee::get::all::setup::routes(postgres.clone(), cfg);
+    crate::application::employee::get::info::setup::routes(postgres, cfg);
 }
