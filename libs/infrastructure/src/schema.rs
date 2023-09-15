@@ -12,10 +12,12 @@ diesel::table! {
         sex -> Varchar,
         image -> Bytea,
         birth_year -> Int4,
-        start_of_work -> Timestamptz,
+        #[max_length = 20]
+        start_of_work -> Varchar,
         #[max_length = 10]
         type_of_contract -> Varchar,
-        length_of_contract -> Timestamptz,
+        #[max_length = 20]
+        length_of_contract -> Varchar,
         #[max_length = 50]
         department -> Varchar,
         days_of_holiday -> Nullable<Int4>,
