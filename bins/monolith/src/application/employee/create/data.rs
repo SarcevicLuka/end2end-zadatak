@@ -31,18 +31,18 @@ impl Validation for CreateEmployeeUserData {
             rule_length_min!(last_name, 2),
             rule_required!(image),
             rule_in!(sex, vec![
-                "m", "f"
+                "Male", "Female"
             ]),
             rule_required!(birth_year),
             rule_required!(start_of_work),
             rule_required!(type_of_contract),
             rule_in!(type_of_contract, vec![
-                "partTime", "fullTime"
+                "Part time", "Full time"
             ]),
             rule_required!(length_of_contract),
             rule_required!(department),
             rule_in!(department, vec![
-                "accounting", "hr", "it", "financial"
+                "Accounting", "HR", "IT", "Financial"
             ]),
         ]
     }

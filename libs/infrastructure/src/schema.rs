@@ -8,7 +8,7 @@ diesel::table! {
         first_name -> Varchar,
         #[max_length = 255]
         last_name -> Varchar,
-        #[max_length = 1]
+        #[max_length = 10]
         sex -> Varchar,
         image -> Bytea,
         birth_year -> Int4,

@@ -35,8 +35,8 @@ impl PgRepositoryContract for PgRepository {
     
         if let Some(sort) = &attributes.sort {
             query = match sort.as_ref() {
-                "ASC" => query.order(employees::first_name.asc()),
-                "DESC" => query.order(employees::first_name.desc()),
+                "ASC" => query.order(employees::created_at.asc()),
+                "DESC" => query.order(employees::created_at.desc()),
                 _ => query,
             };
         }

@@ -48,6 +48,48 @@ impl Employee {
     }
 }
 
+#[derive(Queryable, Serialize, Deserialize, PartialEq, Eq, Debug, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct DisplayEmployee {
+    pub id: String,
+    pub first_name: String,
+    pub last_name: String,
+    pub sex: String,
+    pub image: String,
+    pub birth_year: i32,
+    pub start_of_work: String,
+    pub type_of_contract: String,
+    pub length_of_contract: String,
+    pub department: String,
+    pub days_of_holiday: Option<i32>,
+    pub free_days: Option<i32>,
+    pub days_of_paid_leave: Option<i32>,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+}
+
+impl From<Employee> for DisplayEmployee {
+    fn from(value: Employee) -> Self {
+        Self { 
+            id: value.id, 
+            first_name: value.first_name, 
+            last_name: value.last_name, 
+            sex: value.sex,
+            image: str::from_utf8(&value.image).unwrap().to_string(),
+            birth_year: value.birth_year,
+            start_of_work: value.start_of_work,
+            type_of_contract: value.type_of_contract,
+            length_of_contract: value.length_of_contract,
+            department: value.department,
+            days_of_holiday: value.days_of_holiday,
+            free_days: value.free_days,
+            days_of_paid_leave: value.days_of_paid_leave,
+            created_at: value.created_at, 
+            updated_at: value.updated_at, 
+        }
+    }
+}
+
 /// Struct for creating Employee from registration data
 #[derive(Serialize, Deserialize, Insertable, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = employees)]

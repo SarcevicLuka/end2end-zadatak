@@ -1,6 +1,6 @@
 use error::Error;
 use async_trait::async_trait;
-use support::store::models::employee::Employee;
+use support::store::models::employee::DisplayEmployee;
 
 use super::{
     contract::{PgRepositoryContract, CreateEmployeeContract}, 
@@ -21,10 +21,11 @@ where
     async fn add_employee(
         &self, 
         data: CreateEmployeeUserData
-    ) -> Result<Employee, Error> {
+    ) -> Result<DisplayEmployee, Error> {
         self
             .repository
             .create_employee(data.insertable())
             .await
+            .map(DisplayEmployee::from)
     }
 }

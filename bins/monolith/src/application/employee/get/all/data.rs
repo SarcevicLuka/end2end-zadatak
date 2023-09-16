@@ -1,7 +1,7 @@
 use length_aware_paginator::Response;
 use serde::{Serialize, Deserialize};
 use validr::*;
-use support::store::models::employee::Employee;
+use support::store::models::employee::{Employee, DisplayEmployee};
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -10,7 +10,7 @@ pub struct PaginatedEmployeesResponse {
     pub per_page: i64,
     pub total: i64,
     pub last_page: i64,
-    pub data: Vec<Employee>,
+    pub data: Vec<DisplayEmployee>,
 }
 
 impl From<Response<Employee>> for PaginatedEmployeesResponse {
@@ -20,7 +20,10 @@ impl From<Response<Employee>> for PaginatedEmployeesResponse {
             per_page: source.per_page,
             total: source.total,
             last_page: source.last_page,
-            data: source.data,
+            data: source.data
+                .into_iter()
+                .map(DisplayEmployee::from)
+                .collect::<Vec<DisplayEmployee>>(),
         }
     }
 }
