@@ -1,8 +1,8 @@
 use chrono::NaiveDateTime;
-use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, prelude::Identifiable, Selectable};
+use diesel::{Insertable, Queryable, RunQueryDsl, QueryDsl, ExpressionMethods, prelude::Identifiable, Selectable, query_builder::AsChangeset};
 use infrastructure::{
     db::DbConnection,
-    schema::employees
+    schema::{employees, employees::dsl::employees as employee_edit}
 };
 use error::Error;
 use std::str;
@@ -43,6 +43,15 @@ impl Employee {
     pub fn get_by_id(employee_id: &str, connection: &mut DbConnection) -> Result<Employee, Error> {
         employees::table
             .filter(employees::id.eq(employee_id))
+            .get_result::<Employee>(connection)
+            .map_err(Error::from)
+    }
+
+    /// Helper method to edit Employee by id
+    pub fn edit_by_id(data: CreateNewEmployeeData, employee_id: &str, connection: &mut DbConnection) -> Result<Employee, Error> {
+        diesel::update(employee_edit)
+            .filter(employees::id.eq(employee_id))
+            .set(data)
             .get_result::<Employee>(connection)
             .map_err(Error::from)
     }
@@ -91,7 +100,7 @@ impl From<Employee> for DisplayEmployee {
 }
 
 /// Struct for creating Employee from registration data
-#[derive(Serialize, Deserialize, Insertable, PartialEq, Eq, Debug, Clone)]
+#[derive(Serialize, Deserialize, Insertable, AsChangeset, PartialEq, Eq, Debug, Clone)]
 #[diesel(table_name = employees)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateNewEmployeeData {

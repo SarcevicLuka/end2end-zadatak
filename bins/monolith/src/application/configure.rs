@@ -15,4 +15,5 @@ fn employee(
 ) {
     crate::application::employee::create::setup::routes(postgres.clone(), cfg);
     crate::application::employee::get::all::setup::routes(postgres.clone(), cfg);
+    crate::application::employee::edit::setup::routes(postgres, cfg);
 }
